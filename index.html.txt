@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فروشگاه آنلاین کارلنسر</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .cart-badge {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .category-card {
+            transition: all 0.3s ease;
+        }
+        
+        .category-card:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 h-full">
+    <!-- Header -->
+    <header class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between py-4">
+                <!-- Logo -->
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">ک</span>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-800">کارلنسر شاپ</h1>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-lg mx-8">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="جستجو در محصولات..." 
+                               class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <div class="absolute right-3 top-2.5">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cart & User -->
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <button onclick="toggleCart()" class="relative p-2 text-gray-600 hover:text-blue-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.1 5H19M7 13v8a2 2 0 002 2h6a2 2 0 002-2v-8m-8 0V9a2 2 0 012-2h4a2 2 0 012 2v4.01"></path>
+                        </svg>
+                        <span id="cartCount" class="absolute -top-2 -left-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center cart-badge">0</span>
+                    </button>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        ورود / ثبت نام
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-gray-800 text-white">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-center space-x-8 space-x-reverse py-3">
+                <button onclick="filterProducts('all')" class="nav-link hover:text-blue-400 transition-colors font-medium">همه محصولات</button>
+                <button onclick="filterProducts('electronics')" class="nav-link hover:text-blue-400 transition-colors">الکترونیک</button>
+                <button onclick="filterProducts('clothing')" class="nav-link hover:text-blue-400 transition-colors">پوشاک</button>
+                <button onclick="filterProducts('home')" class="nav-link hover:text-blue-400 transition-colors">خانه و آشپزخانه</button>
+                <button onclick="filterProducts('books')" class="nav-link hover:text-blue-400 transition-colors">کتاب</button>
+                <button onclick="filterProducts('sports')" class="nav-link hover:text-blue-400 transition-colors">ورزش</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-4xl font-bold mb-4">خرید آنلاین با بهترین قیمت</h2>
+            <p class="text-xl mb-8">هزاران محصول با کیفیت و ارسال رایگان</p>
+            <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" 
+                    class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                مشاهده محصولات
+            </button>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h3 class="text-3xl font-bold text-center mb-8 text-gray-800">دسته‌بندی محصولات</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                <div class="category-card text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl cursor-pointer" onclick="filterProducts('electronics')">
+                    <div class="text-4xl mb-3">📱</div>
+                    <h4 class="font-semibold text-gray-800">الکترونیک</h4>
+                </div>
+                <div class="category-card text-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl cursor-pointer" onclick="filterProducts('clothing')">
+                    <div class="text-4xl mb-3">👕</div>
+                    <h4 class="font-semibold text-gray-800">پوشاک</h4>
+                </div>
+                <div class="category-card text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl cursor-pointer" onclick="filterProducts('home')">
+                    <div class="text-4xl mb-3">🏠</div>
+                    <h4 class="font-semibold text-gray-800">خانه</h4>
+                </div>
+                <div class="category-card text-center p-6 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl cursor-pointer" onclick="filterProducts('books')">
+                    <div class="text-4xl mb-3">📚</div>
+                    <h4 class="font-semibold text-gray-800">کتاب</h4>
+                </div>
+                <div class="category-card text-center p-6 bg-gradient-to-br from-red-50 to-red-100 rounded-xl cursor-pointer" onclick="filterProducts('sports')">
+                    <div class="text-4xl mb-3">⚽</div>
+                    <h4 class="font-semibold text-gray-800">ورزش</h4>
+                </div>
+                <div class="category-card text-center p-6 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl cursor-pointer" onclick="filterProducts('all')">
+                    <div class="text-4xl mb-3">🛍️</div>
+                    <h4 class="font-semibold text-gray-800">همه</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-3xl font-bold text-gray-800">محصولات پیشنهادی</h3>
+                <select id="sortSelect" onchange="sortProducts()" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="default">مرتب‌سازی</option>
+                    <option value="price-low">قیمت: کم به زیاد</option>
+                    <option value="price-high">قیمت: زیاد به کم</option>
+                    <option value="name">نام محصول</option>
+                </select>
+            </div>
+            
+            <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="fixed top-0 left-0 h-full w-80 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50">
+        <div class="p-6 border-b">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-bold">سبد خرید</h3>
+                <button onclick="toggleCart()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div id="cartItems" class="flex-1 overflow-y-auto p-6">
+            <p class="text-gray-500 text-center">سبد خرید شما خالی است</p>
+        </div>
+        
+        <div id="cartFooter" class="border-t p-6 bg-gray-50">
+            <div class="flex justify-between items-center mb-4">
+                <span class="font-semibold">مجموع:</span>
+                <span id="cartTotal" class="font-bold text-lg">0 تومان</span>
+            </div>
+            <button onclick="checkout()" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                تسویه حساب
+            </button>
+        </div>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div id="cartOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleCart()"></div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">درباره ما</h4>
+                    <p class="text-gray-300">فروشگاه آنلاین کارلنسر با هدف ارائه بهترین محصولات و خدمات به مشتریان عزیز فعالیت می‌کند.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">خدمات مشتریان</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-white transition-colors">پیگیری سفارش</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">شرایط بازگشت</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">راهنمای خرید</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">سوالات متداول</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">تماس با ما</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li>📞 021-12345678</li>
+                        <li>📧 info@karlancer.com</li>
+                        <li>📍 تهران، خیابان ولیعصر</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">شبکه‌های اجتماعی</h4>
+                    <div class="flex space-x-4 space-x-reverse">
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">📘</a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">📷</a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">🐦</a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">💼</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
+                <p>&copy; 2024 کارلنسر شاپ. تمامی حقوق محفوظ است.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample products data
+        const products = [
+            {
+                id: 1,
+                name: "گوشی هوشمند سامسونگ",
+                price: 15000000,
+                category: "electronics",
+                image: "📱",
+                description: "گوشی هوشمند با کیفیت بالا"
+            },
+            {
+                id: 2,
+                name: "لپ‌تاپ ایسوس",
+                price: 25000000,
+                category: "electronics",
+                image: "💻",
+                description: "لپ‌تاپ گیمینگ قدرتمند"
+            },
+            {
+                id: 3,
+                name: "تی‌شرت مردانه",
+                price: 350000,
+                category: "clothing",
+                image: "👕",
+                description: "تی‌شرت نخی با کیفیت"
+            },
+            {
+                id: 4,
+                name: "کتاب برنامه‌نویسی",
+                price: 180000,
+                category: "books",
+                image: "📖",
+                description: "آموزش کامل برنامه‌نویسی"
+            },
+            {
+                id: 5,
+                name: "توپ فوتبال",
+                price: 450000,
+                category: "sports",
+                image: "⚽",
+                description: "توپ فوتبال حرفه‌ای"
+            },
+            {
+                id: 6,
+                name: "قابلمه استیل",
+                price: 280000,
+                category: "home",
+                image: "🍳",
+                description: "قابلمه استیل ضدخش"
+            },
+            {
+                id: 7,
+                name: "هدفون بلوتوث",
+                price: 1200000,
+                category: "electronics",
+                image: "🎧",
+                description: "هدفون بی‌سیم با کیفیت صدا عالی"
+            },
+            {
+                id: 8,
+                name: "کفش ورزشی",
+                price: 890000,
+                category: "sports",
+                image: "👟",
+                description: "کفش ورزشی راحت و با دوام"
+            }
+        ];
+
+        let cart = [];
+        let currentFilter = 'all';
+        let currentSort = 'default';
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            displayProducts(products);
+            updateCartUI();
+        });
+
+        // Display products
+        function displayProducts(productsToShow) {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+
+            productsToShow.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card bg-white rounded-xl shadow-md overflow-hidden';
+                productCard.innerHTML = `
+                    <div class="p-6">
+                        <div class="text-6xl text-center mb-4">${product.image}</div>
+                        <h4 class="font-semibold text-lg mb-2 text-gray-800">${product.name}</h4>
+                        <p class="text-gray-600 text-sm mb-4">${product.description}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-bold text-blue-600">${product.price.toLocaleString()} تومان</span>
+                            <button onclick="addToCart(${product.id})" 
+                                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                افزودن به سبد
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(productCard);
+            });
+        }
+
+        // Filter products
+        function filterProducts(category) {
+            currentFilter = category;
+            let filteredProducts = category === 'all' ? products : products.filter(p => p.category === category);
+            
+            // Apply current sort
+            if (currentSort !== 'default') {
+                filteredProducts = sortProductsArray(filteredProducts, currentSort);
+            }
+            
+            displayProducts(filteredProducts);
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-blue-400');
+            });
+            event.target.classList.add('text-blue-400');
+        }
+
+        // Sort products
+        function sortProducts() {
+            const sortValue = document.getElementById('sortSelect').value;
+            currentSort = sortValue;
+            
+            let productsToShow = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
+            
+            if (sortValue !== 'default') {
+                productsToShow = sortProductsArray(productsToShow, sortValue);
+            }
+            
+            displayProducts(productsToShow);
+        }
+
+        function sortProductsArray(productsArray, sortType) {
+            const sorted = [...productsArray];
+            
+            switch(sortType) {
+                case 'price-low':
+                    return sorted.sort((a, b) => a.price - b.price);
+                case 'price-high':
+                    return sorted.sort((a, b) => b.price - a.price);
+                case 'name':
+                    return sorted.sort((a, b) => a.name.localeCompare(b.name));
+                default:
+                    return sorted;
+            }
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) ||
+                product.description.toLowerCase().includes(searchTerm)
+            );
+            displayProducts(filteredProducts);
+        });
+
+        // Add to cart
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({...product, quantity: 1});
+            }
+            
+            updateCartUI();
+            
+            // Show success message
+            showNotification('محصول به سبد خرید اضافه شد!');
+        }
+
+        // Remove from cart
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartUI();
+        }
+
+        // Update cart quantity
+        function updateQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    updateCartUI();
+                }
+            }
+        }
+
+        // Update cart UI
+        function updateCartUI() {
+            const cartCount = document.getElementById('cartCount');
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            cartCount.textContent = totalItems;
+            cartTotal.textContent = totalPrice.toLocaleString() + ' تومان';
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p class="text-gray-500 text-center">سبد خرید شما خالی است</p>';
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="flex items-center justify-between border-b pb-4 mb-4">
+                        <div class="flex items-center">
+                            <span class="text-2xl ml-3">${item.image}</span>
+                            <div>
+                                <h4 class="font-semibold text-sm">${item.name}</h4>
+                                <p class="text-gray-600 text-xs">${item.price.toLocaleString()} تومان</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <button onclick="updateQuantity(${item.id}, -1)" class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full text-xs hover:bg-gray-300">-</button>
+                            <span class="mx-2 text-sm">${item.quantity}</span>
+                            <button onclick="updateQuantity(${item.id}, 1)" class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full text-xs hover:bg-gray-300">+</button>
+                            <button onclick="removeFromCart(${item.id})" class="mr-2 text-red-500 hover:text-red-700">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Toggle cart sidebar
+        function toggleCart() {
+            const sidebar = document.getElementById('cartSidebar');
+            const overlay = document.getElementById('cartOverlay');
+            
+            if (sidebar.classList.contains('translate-x-full')) {
+                sidebar.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        // Checkout function
+        function checkout() {
+            if (cart.length === 0) {
+                showNotification('سبد خرید شما خالی است!');
+                return;
+            }
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            showNotification(`سفارش شما به مبلغ ${total.toLocaleString()} تومان ثبت شد! (نمونه)`);
+            
+            // Clear cart
+            cart = [];
+            updateCartUI();
+            toggleCart();
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9901e7d1d01a5d40',t:'MTc2MDcyNjIyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
